@@ -1,6 +1,5 @@
-## ImageFinder Goal
+## ImageFinder
 The ImageFinder Application performs a web crawl on a URL string provided by the user. From the crawl, all of the images on that web page will be parsed out and return a JSON array of strings that represent the URLs of all images on the page
-
 
 ### Setup
 To build the project, run the command:
@@ -14,7 +13,6 @@ To clear 'target' directory, you may run the command:
 To run the project, use the following command to start the server:
 
 >`mvn clean test package jetty:run` 
-<br>
 
 ## Examples
 
