@@ -1,4 +1,0 @@
-Please paste your list of test URLs below:
-https://www.simplesite.com/
-https://www.vidrio.com/?hsLang=en
-http://cerebralstaff.com/index.php
