@@ -15,7 +15,7 @@ To run the project, use the following command to start the server:
 
 >`mvn clean test package jetty:run`
 
-#### Examples
+### Examples
 
 ![](images/web-crawl-loading.png) 
 
