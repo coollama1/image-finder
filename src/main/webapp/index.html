@@ -1,0 +1,167 @@
+<html>
+<head>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+        crossorigin="anonymous" />
+<link rel="stylesheet" href="style.css">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</head>
+<body>
+	<div class="col-lg-6 pl-4 pt-4">
+		<div class="row">
+			
+		</div>
+		<h2 style="color:#DC3545"> Web Crawler
+		
+		<img src="https://img.icons8.com/external-icongeek26-flat-icongeek26/50/000000/external-spider-bugs-and-insects-icongeek26-flat-icongeek26.png"/>
+		
+		</h2>
+		
+		<br/>
+		<p>Enter the full url of any webpage, and I'll show you a complete chart of all the 
+		images on that page and also all the subpages.</p>
+		<br/>
+		
+			
+		
+		<div class="content">
+			<div class="input">
+				<form>
+					<input class="form-control input-sm" type="text" name="url" style="color:#DC3545">
+				</form>
+				<button id="submitButton" class="btn btn-danger" onclick="" type="button">Submit</button>
+			</div>
+		</div>
+		
+			<table class="table mt-5" id="imageTable">
+		  <thead class="red" style="color:white;background-color:#DC3545">
+		    <tr>
+		      <th scope="col" style="width: 25%">Path to Image</th>
+		      <th scope="col">Image URL</th>
+		      <th scope="col">Image</th>
+		      <th scope="col" style="width: 15%">Frequency</th>
+		    </tr>
+		  </thead>
+		  <tbody id="tableBody">
+		    <tr>
+		    </tr>
+		  </tbody>
+		</table>
+		<br/>
+		<div class="row">
+		
+			<div class="col-sm-5"></div>
+			<div class="col"><div id="loader" class="loader mr-5"></div></div>
+		</div>
+		
+		
+	</div>
+
+	<script>
+		var resultList = document.querySelector('ul.results');
+		var urlInput = document.querySelector('input[name=url]')
+
+		function hideLoader() {
+			var loader = document.getElementById("loader");
+		    loader.style.display = "none";
+		}
+		
+		function showLoader(){
+			var loader = document.getElementById("loader");
+			 loader.style.display = "block";
+		}
+		
+		function clearTableBody(){
+			var oldTableBody = document.getElementById("imageTable").tBodies[0];
+			var newTableBody = document.createElement('tbody');
+			oldTableBody.parentNode.replaceChild(newTableBody,oldTableBody);
+		}
+		
+		apiCallBack = function(xhr, callback) {
+			if (xhr.readyState == XMLHttpRequest.DONE) {
+				if (xhr.status != 200) {
+					let message = xhr.status + ":" + xhr.statusText + ":"
+							+ xhr.responseText;
+					alert(message);
+					throw 'API call returned bad code: ' + xhr.status;
+				}
+				let response = xhr.responseText ? JSON.parse(xhr.responseText)
+						: null;
+				if (callback) {
+					callback(response);
+				}
+			}
+		}
+
+		updateList = function(response) {
+			var table = document.getElementById("imageTable");
+			var tableBody = document.getElementById("imageTable").tBodies[0];
+			for (var i = 0; i < response.length; i+=3) {
+				var img = document.createElement("img");
+				img.width = 100;
+				img.height = 100;
+				img.src = response[i+1];
+				
+				var row = tableBody.insertRow(-1);
+				var cell1 = row.insertCell(0);
+				var cell2 = row.insertCell(1);
+				var cell3 = row.insertCell(2);
+				var cell4 = row.insertCell(3);
+				
+				var pathToLink = document.createElement("p");
+				var pathArray = response[i].split(",");
+				
+				for(var j = 0; j < pathArray.length; j++){
+					var currentLink = document.createElement("a");
+					currentLink.setAttribute("style","color:#DC3545");
+					currentLink.setAttribute("href",pathArray[j]);
+					currentLink.innerHTML = "link";	
+					
+					var arrowText = document.createElement("p");
+					arrowText.innerHTML = " -> ";
+					arrowText.setAttribute("style","color:#DC3545;display:inline");
+					
+					cell1.appendChild(currentLink);
+					if(j < pathArray.length - 1){
+						cell1.append(arrowText);
+					}
+				}
+				
+				var imageLink = document.createElement("a");
+				imageLink.setAttribute("href",response[i+1]);
+				imageLink.setAttribute("style","color:#DC3545")
+				imageLink.innerHTML = "link";
+				
+				var frequency = document.createElement("p");
+				frequency.setAttribute("style", "color:#DC3545");
+				frequency.innerHTML = response[i+2];
+				
+				cell1.appendChild(pathToLink);
+				cell2.appendChild(imageLink);
+				cell3.appendChild(img);
+				cell4.appendChild(frequency);
+			}
+			hideLoader();
+		}
+
+		makeApiCall = function(url, method, obj, callback) {
+			let xhr = new XMLHttpRequest();
+			xhr.open(method, url);
+			xhr.onreadystatechange = apiCallBack.bind(null, xhr, callback);
+			xhr.send(obj ? obj instanceof FormData || obj.constructor == String ? obj : JSON.stringify(obj) : null);
+		}
+
+		document.querySelector('button').addEventListener("click", function(event) {
+			clearTableBody();
+			showLoader();
+			event.preventDefault();
+			makeApiCall('/main?url=' + urlInput.value, 'POST', null, updateList);
+		});
+	</script>
+</body>
+
+</html>
