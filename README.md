@@ -1,5 +1,5 @@
 ## ImageFinder
-The ImageFinder Application performs a web crawl on a URL string provided by the user. From the crawl, all of the images on that web page will be parsed out and return a JSON array of strings that represent the URLs of all images on the page
+The ImageFinder Application performs a web crawl on a URL string provided by the user. From the crawl, all of the images on that web page will be parsed out and return a JSON array of strings that represent the URLs of all images on the page and subpages as well
 
 ### Setup
 To build the project, run the command:
